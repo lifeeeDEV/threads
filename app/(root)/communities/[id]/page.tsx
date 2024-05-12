@@ -14,7 +14,12 @@ async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   if (!user) return null;
 
-  const communityDetails = await fetchCommunityDetails(params.id);
+  let communityDetails = await fetchCommunityDetails(params.id);
+  
+  // Hier fügen wir die Sortierung hinzu, falls die Daten nicht sortiert sind
+  if (communityDetails && communityDetails.threads) {
+    communityDetails.threads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
 
   return (
     <section>
@@ -52,11 +57,11 @@ async function Page({ params }: { params: { id: string } }) {
           </TabsList>
 
           <TabsContent value='threads' className='w-full text-light-1'>
-            {/* @ts-ignore */}
             <ThreadsTab
               currentUserId={user.id}
               accountId={communityDetails._id}
               accountType='Community'
+              threads={communityDetails.threads} // Gebe sortierte Threads weiter
             />
           </TabsContent>
 
@@ -76,7 +81,6 @@ async function Page({ params }: { params: { id: string } }) {
           </TabsContent>
 
           <TabsContent value='requests' className='w-full text-light-1'>
-            {/* @ts-ignore */}
             <ThreadsTab
               currentUserId={user.id}
               accountId={communityDetails._id}
