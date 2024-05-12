@@ -15,9 +15,9 @@ async function Page({ params }: { params: { id: string } }) {
   if (!user) return null;
 
   let communityDetails = await fetchCommunityDetails(params.id);
-  
-  // Hier fügen wir die Sortierung hinzu, falls die Daten nicht sortiert sind
-  if (communityDetails && communityDetails.threads) {
+
+  // Sortieren der Threads nach dem 'createdAt' Datum, falls sie nicht bereits sortiert sind
+  if (communityDetails.threads) {
     communityDetails.threads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
@@ -61,7 +61,7 @@ async function Page({ params }: { params: { id: string } }) {
               currentUserId={user.id}
               accountId={communityDetails._id}
               accountType='Community'
-              threads={communityDetails.threads} // Gebe sortierte Threads weiter
+              threads={communityDetails.threads}
             />
           </TabsContent>
 
@@ -75,8 +75,8 @@ async function Page({ params }: { params: { id: string } }) {
                   username={member.username}
                   imgUrl={member.image}
                   personType='User'
-                />
-              ))}
+                ))
+              }
             </section>
           </TabsContent>
 
