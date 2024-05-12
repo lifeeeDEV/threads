@@ -66,28 +66,31 @@ export async function fetchUserPosts(userId: string) {
   try {
     connectToDB();
 
-    // Find all threads authored by the user with the given userId
-    const threads = await User.findOne({ id: userId }).populate({
+    // Finde den Benutzer basierend auf der gegebenen userId und hole alle von ihm erstellten Threads
+    const userWithThreads = await User.findOne({ id: userId }).populate({
       path: "threads",
       model: Thread,
+      options: { sort: { 'createdAt': -1 } }, // Sortiere die Threads absteigend nach Erstellungsdatum
       populate: [
         {
           path: "community",
           model: Community,
-          select: "name id image _id", // Select the "name" and "_id" fields from the "Community" model
+          select: "name id image _id", // Selektiere die Felder "name" und "_id" aus dem "Community" Modell
         },
         {
           path: "children",
           model: Thread,
+          options: { sort: { 'createdAt': -1 } }, // Sortiere auch die Unterthreads absteigend nach Erstellungsdatum
           populate: {
             path: "author",
             model: User,
-            select: "name image id", // Select the "name" and "_id" fields from the "User" model
+            select: "name image id", // Selektiere die Felder "name", "image" und "id" aus dem "User" Modell
           },
         },
       ],
     });
-    return threads;
+
+    return userWithThreads;
   } catch (error) {
     console.error("Error fetching user threads:", error);
     throw error;
