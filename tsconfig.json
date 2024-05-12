@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",  // This tells TypeScript to interpret JSX in the way React understands it.
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
