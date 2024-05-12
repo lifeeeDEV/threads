@@ -7,16 +7,21 @@ import ProfileHeader from "@/components/shared/ProfileHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchCommunityDetails } from "@/lib/actions/community.actions";
 
+// Define an interface to describe the structure of a thread
+interface Thread {
+  createdAt: string; // Assuming createdAt is a string formatted as a date
+  // Include other properties as per your data model
+}
+
 async function Page({ params }: { params: { id: string } }) {
   const user = await currentUser();
   if (!user) return null;
 
   const communityDetails = await fetchCommunityDetails(params.id);
 
-  // Assuming communityDetails.threads is an array of thread objects
   if (communityDetails.threads) {
-    // Sort threads by createdAt date descending
-    communityDetails.threads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Sort threads by createdAt date descending, using the Thread interface for typing
+    communityDetails.threads.sort((a: Thread, b: Thread) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }
 
   return (
@@ -72,8 +77,8 @@ async function Page({ params }: { params: { id: string } }) {
                   username={member.username}
                   imgUrl={member.image}
                   personType='User'
-                />
-              ))}
+                ))
+              }
             </section>
           </TabsContent>
 
