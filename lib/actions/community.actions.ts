@@ -74,30 +74,32 @@ export async function fetchCommunityPosts(id: string) {
   try {
     connectToDB();
 
+    // Hier rufen wir die Community-Informationen basierend auf der ID ab.
     const communityPosts = await Community.findById(id).populate({
       path: "threads",
       model: Thread,
+      options: { sort: { 'createdAt': -1 } },  // Dies sortiert die Threads nach dem createdAt-Feld in absteigender Reihenfolge.
       populate: [
         {
           path: "author",
           model: User,
-          select: "name image id", // Select the "name" and "_id" fields from the "User" model
+          select: "name image _id"
         },
         {
           path: "children",
           model: Thread,
+          options: { sort: { 'createdAt': -1 } },  // Sortiert auch die Unterthreads nach dem Erstellungsdatum.
           populate: {
             path: "author",
             model: User,
-            select: "image _id", // Select the "name" and "_id" fields from the "User" model
-          },
-        },
+            select: "name image _id"
+          }
+        }
       ],
     });
 
     return communityPosts;
   } catch (error) {
-    // Handle any errors
     console.error("Error fetching community posts:", error);
     throw error;
   }
