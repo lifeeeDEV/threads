@@ -13,9 +13,10 @@ async function Page({ params }: { params: { id: string } }) {
 
   const communityDetails = await fetchCommunityDetails(params.id);
 
-  // Sicherstellen, dass die Threads sortiert sind
+  // Assuming communityDetails.threads is an array of thread objects
   if (communityDetails.threads) {
-    communityDetails.threads.sort((a, b) => new Date(b.createdAt.$date.$numberLong) - new Date(a.createdAt.$date.$numberLong));
+    // Sort threads by createdAt date descending
+    communityDetails.threads.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 
   return (
